@@ -21,8 +21,8 @@ secrets.json
 venv/
 env/
 .virtualenv/
-Pipfile
-Pipfile.lock
+# Pipfile
+# Pipfile.lock
 
 # 4️⃣ Django-specific
 media/       # User-uploaded files (avoid pushing personal data)
