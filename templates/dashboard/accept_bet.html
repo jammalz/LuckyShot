@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Review Bet</h2>
+    <p><strong>Match:</strong> {{ bet.bet_match }}</p>
+    <p><strong>Your Opponent:</strong> {{ bet.user_1.username }}</p>
+    <p><strong>Original Amounts:</strong> You: ${{ bet.amount_user_2 }}, Opponent: ${{ bet.amount_user_1 }}</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <h3>Update Bet (Optional)</h3>
+        {{ form.as_p }}
+        
+        <button type="submit" name="action" value="accept">Accept Bet</button>
+        <button type="submit" name="action" value="edit">Propose Changes</button>
+        <button type="submit" name="action" value="decline">Decline Bet</button>
+    </form>
+    
+    <a href="{% url 'dashboard' %}">Cancel</a>
+{% endblock %}

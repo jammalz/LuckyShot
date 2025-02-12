@@ -1,0 +1,57 @@
+/* layout.css */
+
+/* Import colors.css */
+@import url('colors.css');
+
+/* Main Content Adjustments */
+.layout {
+    display: flex;
+    min-height: auto;
+    position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--color-highlighted-background);
+    border-radius: 10px;
+    color: var(--color-highlighted-background);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    width: 250px;
+    margin-right: 20px;
+}
+
+.sidebar-header h1 {
+    font-size: 1.5rem;
+    color: var(--color-text);
+}
+
+/* make footer always be at the extreme bottom of the sidebar */
+.sidebar-footer {
+    margin-top: auto;
+}
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-item {
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background 0.3s;
+}
+
+.menu-item:hover {
+    background: var(--color-primary);
+}
+
+.sidebar-footer {
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--color-text);
+}

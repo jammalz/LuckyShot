@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Create a New Bet</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Hidden Fields to Fetch URL Parameters -->
+            <input type="hidden" id="bet_match_value" value="{{ request.GET.bet_match }}">
+            <input type="hidden" id="bet_choice_value" value="{{ request.GET.bet_choice }}">
+            <input type="hidden" id="selected_odd_value" value="{{ request.GET.selected_odd }}">
+
+            {{ form.as_p }}
+
+            <button type="submit">Create Bet</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const betChoiceField = document.getElementById('id_bet_choice');
+            const betMatchField = document.getElementById('id_bet_match');
+            const selectedOddField = document.getElementById('id_selected_odd');
+
+            // Get values from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const betMatchValue = urlParams.get("bet_match");
+            const betChoiceValue = urlParams.get("bet_choice");
+            const selectedOddValue = urlParams.get("selected_odd");
+
+            // Function to update bet choices with both teams of the selected match
+            function updateBetChoices() {
+                betChoiceField.innerHTML = '<option value="">Select a team</option>';  // Reset choices
+
+                // Get selected match's teams from the dataset attribute
+                const selectedMatch = betMatchField.options[betMatchField.selectedIndex];
+                const matchTeams = selectedMatch ? selectedMatch.getAttribute("data-teams")?.split(",") || [] : [];
+
+                matchTeams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    betChoiceField.appendChild(option);
+                });
+
+                // Pre-select bet_choice if it's in the URL parameters
+                if (betChoiceValue && matchTeams.includes(betChoiceValue)) {
+                    betChoiceField.value = betChoiceValue;
+                }
+            }
+
+            // Function to update the selected odd when the bet choice is selected
+            function updateSuggestedOdd() {
+                if (betMatchField.value && betChoiceField.value) {
+                    selectedOddField.value = selectedOddValue || "";
+                }
+            }
+
+            // Event Listeners for Dynamic Updates
+            betMatchField.addEventListener('change', updateBetChoices);
+            betChoiceField.addEventListener('change', updateSuggestedOdd);
+
+            // Initialize on Page Load
+            if (betMatchValue) {
+                betMatchField.value = betMatchValue;
+                updateBetChoices();  // Ensure bet_choice updates when the page loads
+            }
+            if (selectedOddValue) {
+                selectedOddField.value = selectedOddValue;
+            }
+        });
+    </script>
+
+    <style>
+        input::placeholder {
+            color: #bbb; /* Light gray placeholder */
+        }
+        button {
+            background-color: #28a745; /* Green */
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #218838; /* Darker green */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+{% endblock %}

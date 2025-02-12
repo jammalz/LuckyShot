@@ -1,0 +1,30 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h1>ResenhaBet</h1>
+    </div>
+    <ul class="menu">
+        {% if user.is_staff %}
+            <li><a href="{% url 'admin:index' %}" class="menu-item">Admin</a></li>
+        {% endif %}
+            <li><a href="{% url 'matches' %}" class="menu-item">Matches</a></li>
+            <li><a href="{% url 'dashboard' %}" class="menu-item">Dashboard</a></li>
+            <li><a href="{% url 'create_bet' %}" class="menu-item">Create Bet</a></li>
+        <!-- only showup signup and login if user in not logged in -->
+        {% if not user.is_authenticated %}
+            <li><a href="{% url 'signup' %}" class="menu-item">Sign Up</a></li>
+            <li><a href="{% url 'login' %}" class="menu-item">Login</a></li>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <li>
+                <a href="#" class="menu-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                    {% csrf_token %}
+                </form>
+            </li>
+        {% endif %}
+        
+    </ul>
+    <footer class="sidebar-footer">
+        <p>&copy; 2025 ResenhaBet</p>
+    </footer>
+</aside>

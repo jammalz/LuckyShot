@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- <h2>Welcome, {{ user.username }}</h2> -->
+
+    <!-- Current Bets -->
+    <h3>Current Bets</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Match</th>
+                <th>Opponent</th>
+                <th>Your Choice</th>
+                <th>Bet Value</th>
+                <th>Jackpot</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bet in current_bets %}
+                <tr>
+                    <td>{{ bet.bet_match }}</td>
+                    <td>{{ bet.opponent }}</td>
+                    <td>{{ bet.bet_choice }}</td>
+                    <td>${{ bet.your_amount }}</td>
+                    <td>${{ bet.jackpot }}</td>
+                    <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No current bets found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Bets Awaiting Your Approval -->
+    <h3>Bets Awaiting Your Approval</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Match</th>
+                    <th>Opponent</th>
+                    <th>Your Choice</th>
+                    <th>Bet Value</th>
+                    <th>Jackpot</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bet in awaiting_your_approval %}
+                    <tr>
+                        <td>{{ bet.bet_match }}</td>
+                        <td>{{ bet.opponent }}</td>
+                        <td>{{ bet.bet_choice }}</td>
+                        <td>${{ bet.your_amount }}</td>
+                        <td>${{ bet.jackpot }}</td>
+                        <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                    </tr>
+                    <div class="review-button">
+                        <button>
+                            <a href="{% url 'accept_bet' bet.id %}">Review Bet</a>
+                        </button>
+                    </div>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">No bets awaiting your approval.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bets Awaiting Opponent Approval -->
+    <h3>Bets Awaiting Opponent Approval</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Match</th>
+                <th>Opponent</th>
+                <th>Your Choice</th>
+                <th>Bet Value</th>
+                <th>Jackpot</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bet in awaiting_opponent_approval %}
+                <tr>
+                    <td>{{ bet.bet_match }}</td>
+                    <td>{{ bet.opponent }}</td>
+                    <td>{{ bet.bet_choice }}</td>
+                    <td>${{ bet.your_amount }}</td>
+                    <td>${{ bet.jackpot }}</td>
+                    <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No bets awaiting opponent approval.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Past Bets -->
+    <h3>Past Bets</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Match</th>
+                <th>Opponent</th>
+                <th>Your Choice</th>
+                <th>Bet Value</th>
+                <th>Jackpot</th>
+                <th>Outcome</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bet in past_bets %}
+                <tr>
+                    <td>{{ bet.bet_match }}</td>
+                    <td>{{ bet.opponent }}</td>
+                    <td>{{ bet.bet_choice }}</td>
+                    <td>${{ bet.your_amount }}</td>
+                    <td>${{ bet.jackpot }}</td>
+                    <td>
+                        {% if bet.winner == user %}
+                            Won
+                        {% else %}
+                            Lost
+                        {% endif %}
+                    </td>
+                    <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No past bets found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

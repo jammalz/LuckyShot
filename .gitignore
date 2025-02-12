@@ -1,0 +1,47 @@
+# 1️⃣ Python & Django-related ignores
+*.pyc
+*.pyo
+__pycache__/
+*.swp
+*.swo
+*.swn
+*.log
+*.sqlite3
+*.db
+
+# 2️⃣ Environment variables & secrets
+.env
+.env.local
+.env.production
+config/settings/local.py
+config/settings/secrets.py
+secrets.json
+
+# 3️⃣ Virtual environment
+venv/
+env/
+.virtualenv/
+Pipfile
+Pipfile.lock
+
+# 4️⃣ Django-specific
+media/       # User-uploaded files (avoid pushing personal data)
+staticfiles/ # Collected static files (can be regenerated)
+local_settings.py
+
+# 5️⃣ IDE & Editor files
+.vscode/
+.idea/
+*.iml
+
+# 6️⃣ Node.js & Frontend (if applicable)
+node_modules/
+npm-debug.log
+yarn.lock
+package-lock.json
+
+# 7️⃣ Git & Deployment
+.DS_Store
+*.bak
+*.orig
+*.log

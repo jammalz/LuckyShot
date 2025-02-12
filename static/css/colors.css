@@ -1,0 +1,9 @@
+/* Define the Color Pallete */
+:root {
+    --color-text: #F5F7F8;
+    --color-accent: #F4CE14;
+    --color-primary: #379777;
+    --color-background: #45474B;
+    --color-highlighted-background: #5A5C60;
+}
+

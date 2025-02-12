@@ -1,0 +1,194 @@
+/* Import css from matches.css */
+
+@import url('matches.css');
+
+/* Links */
+a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+/* 
+a:hover {
+    text-decoration: underline;
+} */
+
+/* Style the form container */
+.form-container {
+    background: var(--color-highlighted-background);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Form Fields */
+form input, form select {
+    width: 100%;
+    height: 40px;
+    margin: 8px 0px 15px 0px;
+    border-radius: 5px;
+    border: 1px solid var(--color-primary);
+    background: #383A3F;
+    color: var(--color-text);
+}
+
+/* Hover and focus effects */
+form input:focus, form select:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 5px var(--color-accent);
+}
+
+/* Styling the selected odd field */
+#id_selected_odd {
+    font-weight: bold;
+    color: var(--color-accent);
+    background: #2D2F34;
+    text-align: center;
+}
+
+/* Form Button */
+button {
+    width: 100%;
+    background: var(--color-primary);
+    color: var(--color-text);
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+    background: var(--color-accent);
+}
+
+/* Adjust form title */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: var(--color-accent);
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+thead {
+    background-color: var(--color-primary);
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+th, td {
+    padding: 12px 15px;
+    position: relative; /* Allows the pseudo-elements for custom borders */
+}
+
+/* Remove Vertical Borders for First and Last Column */
+td:first-child::before,
+th:first-child::before,
+td:last-child::after,
+th:last-child::after {
+    display: none;
+}
+
+/* Borders Between Columns */
+td:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 10%; /* Adjust to control the height of the border */
+    bottom: 10%; /* Adjust to control the height of the border */
+    left: 0;
+    width: 1px;
+    background-color: var(--color-highlighted-background);
+}
+
+/* Borders Between Rows */
+tbody tr {
+    border-bottom: 1px solid var(--color-highlighted-background);
+}
+
+tbody tr:last-child {
+    border-bottom: none; /* Remove border from the last row */
+}
+
+/* Hover Effect */
+tbody tr:hover {
+    background-color: var(--color-highlighted-background);
+    cursor: pointer;
+}
+
+/* Table Container Styling */
+.table-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Position Buttons Beside Rows */
+tbody tr {
+    position: relative;
+}
+
+.review-button {
+    position: absolute;
+    right: -150px; /* Adjust as needed to position the button outside the table */
+    top: 50%;
+    /* transform: translateY(-50%); */
+}
+
+.review-button button {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.review-button button:hover {
+    /* Give popping effect */
+    border: 1px solid var(--color-background);
+}
+
+/* Status Styling */
+
+.status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+}
+
+.status.won {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+}
+
+.status.lost {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+}
+
+.status.in-progress {
+    background-color: var(--color-highlighted-background);
+    color: var(--color-text);
+}
