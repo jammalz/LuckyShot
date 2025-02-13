@@ -64,17 +64,31 @@ class Bet(models.Model):
         return f"Bet: {current_user} vs {opponent} - {self.bet_match} - Your choice: {bet_choice}"
     
 class Match(models.Model):
-    date = models.DateField()
-    time = models.TimeField()
-    teams = models.CharField(max_length=100)  # E.g., "SGP a"
-    odds = models.CharField(max_length=50)  # E.g., "1.61 2.20"
-    status = models.CharField(max_length=20, default="upcoming")
+    external_id = models.CharField(max_length=100, unique=True)  # API Match ID
+    league_id = models.IntegerField(default=475)  # Paulista A1
+    team1 = models.CharField(max_length=100)
+    team2 = models.CharField(max_length=100)
+    start_time = models.DateTimeField(db_index=True)
+
+    # Betting Odds
+    odds_team1 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    odds_team2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    # Live Updates
+    score_team1 = models.IntegerField(null=True, blank=True, default=0)
+    score_team2 = models.IntegerField(null=True, blank=True, default=0)
+    match_status = models.CharField(
+        max_length=20,
+        choices=[("upcoming", "Upcoming"), ("live", "Live"), ("finished", "Finished"), ("canceled", "Canceled")],
+        default="upcoming",
+    )
+    last_updated = models.DateTimeField(auto_now=True)  # Track updates
+
+    def is_live(self):
+        return self.match_status == "live"
 
     def __str__(self):
-        return f"{self.teams} on {self.date} at {self.time}"
-    
-    def get_teams(self):
-        return self.teams.split(" vs ")
+        return f"{self.team1} vs {self.team2} - {self.match_status}"
 
-    def get_odds(self):
-        return self.odds.split()
+    class Meta:
+        ordering = ["start_time"]

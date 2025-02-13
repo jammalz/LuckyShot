@@ -76,7 +76,7 @@ class CreateBetForm(forms.ModelForm):
     )
 
     bet_match = forms.ModelChoiceField(
-        queryset=Match.objects.filter(status="upcoming"),
+        queryset=Match.objects.filter(match_status="upcoming"),
         empty_label="Select a match",
         widget=MatchSelectWidget(attrs={"class": "form-control"}),  # Custom widget to add data-teams attribute
     )

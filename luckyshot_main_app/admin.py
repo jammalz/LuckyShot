@@ -7,4 +7,4 @@ class BetAdmin(admin.ModelAdmin):
 
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ('date', 'time', 'teams', 'odds', 'status')
+    list_display = ('team1', 'team2', 'start_time', 'match_status', 'odds_team1', 'odds_team2', 'score_team1', 'score_team2', 'last_updated')

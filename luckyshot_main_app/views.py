@@ -133,7 +133,7 @@ def accept_bet(request, bet_id):
 def matches(request):
     matches = Match.objects.all()  # Fetch all matches
     # group in matches happening right now, soon and recently completed matches
-    current_matches = matches.filter(status="in_progress")
-    upcoming_matches = matches.filter(status="upcoming")
-    recent_matches = matches.filter(status="completed")
+    current_matches = matches.filter(match_status="in_progress")
+    upcoming_matches = matches.filter(match_status="upcoming")
+    recent_matches = matches.filter(match_status="completed")
     return render(request, 'matches/matches.html', {'current_matches': current_matches, 'upcoming_matches': upcoming_matches, 'recent_matches': recent_matches})

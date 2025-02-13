@@ -17,26 +17,24 @@
         {% for match in current_matches %}
         <div class="match-card">
             <div class="match-header">
-                {{ match.time|date:"g:i A" }} - {{ match.date }}
+                {{ match.start_time|date:"g:i A" }} - {{ match.start_time|date:"M d, Y" }}
             </div>
             <div class="match-content">
-                {% with match.get_teams as teams %}
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.0|add:'.png' %}" alt="{{ teams.0 }}">
-                    <span class="team-name">{{ teams.0 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.0 }}&selected_odd={{ match.get_odds.0 }}" class="odds">
-                        {{ match.get_odds.0 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <span class="team-name">{{ match.team1 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
+                        {{ match.odds_team1 }}
                     </a>
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.1|add:'.png' %}" alt="{{ teams.1 }}">
-                    <span class="team-name">{{ teams.1 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.1 }}&selected_odd={{ match.get_odds.1 }}" class="odds">
-                        {{ match.get_odds.1 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <span class="team-name">{{ match.team2 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
+                        {{ match.odds_team2 }}
                     </a>
                 </div>
-                {% endwith %}
             </div>
         </div>
         {% empty %}
@@ -50,26 +48,24 @@
         {% for match in upcoming_matches %}
         <div class="match-card">
             <div class="match-header">
-                {{ match.time|date:"g:i A" }} - {{ match.date }}
+                {{ match.start_time|date:"g:i A" }} - {{ match.start_time|date:"M d, Y" }}
             </div>
             <div class="match-content">
-                {% with match.get_teams as teams %}
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.0|add:'.png' %}" alt="{{ teams.0 }}">
-                    <span class="team-name">{{ teams.0 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.0 }}&selected_odd={{ match.get_odds.0 }}" class="odds">
-                        {{ match.get_odds.0 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <span class="team-name">{{ match.team1 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
+                        {{ match.odds_team1 }}
                     </a>
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.1|add:'.png' %}" alt="{{ teams.1 }}">
-                    <span class="team-name">{{ teams.1 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.1 }}&selected_odd={{ match.get_odds.1 }}" class="odds">
-                        {{ match.get_odds.1 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <span class="team-name">{{ match.team2 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
+                        {{ match.odds_team2 }}
                     </a>
                 </div>
-                {% endwith %}
             </div>
         </div>
         {% empty %}
@@ -83,26 +79,24 @@
         {% for match in recent_matches %}
         <div class="match-card">
             <div class="match-header">
-                {{ match.time|date:"g:i A" }} - {{ match.date }}
+                {{ match.start_time|date:"g:i A" }} - {{ match.start_time|date:"M d, Y" }}
             </div>
             <div class="match-content">
-                {% with match.get_teams as teams %}
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.0|add:'.png' %}" alt="{{ teams.0 }}">
-                    <span class="team-name">{{ teams.0 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.0 }}&selected_odd={{ match.get_odds.0 }}" class="odds">
-                        {{ match.get_odds.0 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <span class="team-name">{{ match.team1 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
+                        {{ match.odds_team1 }}
                     </a>
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:teams.1|add:'.png' %}" alt="{{ teams.1 }}">
-                    <span class="team-name">{{ teams.1 }}</span>
-                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ teams.1 }}&selected_odd={{ match.get_odds.1 }}" class="odds">
-                        {{ match.get_odds.1 }}
+                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <span class="team-name">{{ match.team2 }}</span>
+                    <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
+                        {{ match.odds_team2 }}
                     </a>
                 </div>
-                {% endwith %}
             </div>
         </div>
         {% empty %}
