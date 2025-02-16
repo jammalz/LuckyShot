@@ -14,7 +14,7 @@ class APISportsClient:
     def get_upcoming_matches(self, league_id=475):
         """ Fetch upcoming matches for Paulista A1 2025 """
         url = f"{BASE_URL}/fixtures"
-        params = {"league": league_id, "season": 2023, "team": 126, "from": "2023-02-05", "to": "2023-02-06"}
+        params = {"league": league_id, "season": 2023, "team": 126, "from": "2023-01-10", "to": "2023-02-09"}
         response = requests.get(url, headers=self.headers, params=params)
 
         if response.status_code == 200:
@@ -26,7 +26,7 @@ class APISportsClient:
     def get_odds(self, match_id):
         """ Fetch odds for a specific match """
         url = f"{BASE_URL}/odds"
-        params = {"fixture": match_id, "bookmaker": 1}  # Example: Bookmaker ID 1
+        params = {"fixture": match_id}  # Example: Bookmaker ID 1
         response = requests.get(url, headers=self.headers, params=params)
 
         if response.status_code == 200:

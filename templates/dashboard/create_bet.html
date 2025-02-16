@@ -23,6 +23,8 @@
             const betChoiceField = document.getElementById('id_bet_choice');
             const betMatchField = document.getElementById('id_bet_match');
             const selectedOddField = document.getElementById('id_selected_odd');
+            const amountUser1Field = document.getElementById('id_amount_user_1');
+            const amountUser2Field = document.getElementById('id_amount_user_2');
 
             // Get values from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
@@ -30,42 +32,60 @@
             const betChoiceValue = urlParams.get("bet_choice");
             const selectedOddValue = urlParams.get("selected_odd");
 
-            // Function to update bet choices with both teams of the selected match
+            // Function to update bet choices dynamically
             function updateBetChoices() {
                 betChoiceField.innerHTML = '<option value="">Select a team</option>';  // Reset choices
-
-                // Get selected match's teams from the dataset attribute
                 const selectedMatch = betMatchField.options[betMatchField.selectedIndex];
-                const matchTeams = selectedMatch ? selectedMatch.getAttribute("data-teams")?.split(",") || [] : [];
+                const matchTeam1 = selectedMatch ? selectedMatch.getAttribute("data-team1") : null;
+                const matchTeam2 = selectedMatch ? selectedMatch.getAttribute("data-team2") : null;
 
-                matchTeams.forEach(team => {
-                    const option = document.createElement('option');
-                    option.value = team;
-                    option.textContent = team;
-                    betChoiceField.appendChild(option);
-                });
+                if (matchTeam1 && matchTeam2) {
+                    betChoiceField.innerHTML += `<option value="${matchTeam1}">${matchTeam1}</option>`;
+                    betChoiceField.innerHTML += `<option value="${matchTeam2}">${matchTeam2}</option>`;
+                }
 
-                // Pre-select bet_choice if it's in the URL parameters
-                if (betChoiceValue && matchTeams.includes(betChoiceValue)) {
+                if (betChoiceValue && [matchTeam1, matchTeam2].includes(betChoiceValue)) {
                     betChoiceField.value = betChoiceValue;
                 }
             }
 
             // Function to update the selected odd when the bet choice is selected
             function updateSuggestedOdd() {
-                if (betMatchField.value && betChoiceField.value) {
-                    selectedOddField.value = selectedOddValue || "";
+                const selectedTeam = betChoiceField.value;
+                const selectedMatch = betMatchField.options[betMatchField.selectedIndex];
+
+                if (selectedMatch && selectedTeam) {
+                    const oddTeam1 = selectedMatch.getAttribute("data-odds-team1");
+                    const oddTeam2 = selectedMatch.getAttribute("data-odds-team2");
+
+                    if (selectedTeam === selectedMatch.getAttribute("data-team1")) {
+                        selectedOddField.value = oddTeam1;
+                    } else if (selectedTeam === selectedMatch.getAttribute("data-team2")) {
+                        selectedOddField.value = oddTeam2;
+                    }
+                }
+            }
+
+            // Auto-fill second amount when the first amount or odd is entered
+            function autoCalculateSecondAmount() {
+                const amountUser1 = parseFloat(amountUser1Field.value);
+                const selectedOdd = parseFloat(selectedOddField.value);
+
+                if (!isNaN(amountUser1) && !isNaN(selectedOdd) && amountUser1 > 0) {
+                    amountUser2Field.value = (amountUser1 * selectedOdd).toFixed(2);
                 }
             }
 
             // Event Listeners for Dynamic Updates
             betMatchField.addEventListener('change', updateBetChoices);
             betChoiceField.addEventListener('change', updateSuggestedOdd);
+            amountUser1Field.addEventListener('input', autoCalculateSecondAmount);
+            selectedOddField.addEventListener('input', autoCalculateSecondAmount);
 
             // Initialize on Page Load
             if (betMatchValue) {
                 betMatchField.value = betMatchValue;
-                updateBetChoices();  // Ensure bet_choice updates when the page loads
+                updateBetChoices();
             }
             if (selectedOddValue) {
                 selectedOddField.value = selectedOddValue;

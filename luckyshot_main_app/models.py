@@ -67,7 +67,9 @@ class Match(models.Model):
     external_id = models.CharField(max_length=100, unique=True)  # API Match ID
     league_id = models.IntegerField(default=475)  # Paulista A1
     team1 = models.CharField(max_length=100)
+    team1_logo = models.URLField(null=True, blank=True)
     team2 = models.CharField(max_length=100)
+    team2_logo = models.URLField(null=True, blank=True)
     start_time = models.DateTimeField(db_index=True)
 
     # Betting Odds

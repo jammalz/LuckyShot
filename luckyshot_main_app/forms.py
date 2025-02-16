@@ -10,7 +10,7 @@ class SignupForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ["username", "email", "password"]
 
     def clean_password(self):
         password = self.cleaned_data.get("password")
@@ -43,33 +43,35 @@ class SignupForm(forms.ModelForm):
         confirm_password = cleaned_data.get("confirm_password")
 
         if password != confirm_password:
-            self.add_error('confirm_password', "Passwords do not match.")
+            self.add_error("confirm_password", "Passwords do not match.")
 
 class MatchSelectWidget(forms.Select):
-    """ Custom Select widget to add data-teams attribute dynamically. """
+    """ Custom Select widget to add team1 and team2 as data attributes dynamically. """
+    
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         option = super().create_option(name, value, label, selected, index, subindex, attrs)
 
         # Extract actual value if it's a ModelChoiceIteratorValue
-        match_id = getattr(value, 'value', value)
+        match_id = getattr(value, "value", value)
 
         # Ensure value is a valid match ID (avoid None or empty selections)
         if match_id:
             try:
                 match = Match.objects.get(pk=match_id)  # Get match instance
-                option['attrs']['data-teams'] = ",".join(match.get_teams())  # Add teams to data-teams
+                option["attrs"]["data-team1"] = match.team1
+                option["attrs"]["data-team2"] = match.team2
+                option["attrs"]["data-odds-team1"] = match.odds_team1
+                option["attrs"]["data-odds-team2"] = match.odds_team2
             except Match.DoesNotExist:
                 pass  # Prevent errors if match is missing
 
         return option
 
-    
 class CreateBetForm(forms.ModelForm):
-    # Adding a field for selected_odd and the amount fields
     user_2 = forms.ModelChoiceField(
         queryset=User.objects.all(),
         widget=forms.TextInput(attrs={
-            "placeholder": "Search for opponent by username or ID", 
+            "placeholder": "Search for opponent by username or ID",
             "id": "user_search"
         }),
         required=True
@@ -78,13 +80,15 @@ class CreateBetForm(forms.ModelForm):
     bet_match = forms.ModelChoiceField(
         queryset=Match.objects.filter(match_status="upcoming"),
         empty_label="Select a match",
-        widget=MatchSelectWidget(attrs={"class": "form-control"}),  # Custom widget to add data-teams attribute
+        widget=MatchSelectWidget(attrs={"class": "form-control"}),  # Custom widget to store match teams
     )
 
     bet_choice = forms.ChoiceField(choices=[], required=True)
 
-    selected_odd = forms.DecimalField(max_digits=5, decimal_places=2, required=True, widget=forms.NumberInput(attrs={'step': '0.01'}))
-    #odd = forms.FloatField(widget=forms.NumberInput(attrs={'step': '0.01', 'readonly': 'readonly'}))  # Read-only field for actual odds
+    selected_odd = forms.DecimalField(
+        max_digits=5, decimal_places=2, required=True,
+        widget=forms.NumberInput(attrs={"step": "0.01"})
+    )
 
     class Meta:
         model = Bet
@@ -92,14 +96,17 @@ class CreateBetForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["bet_choice"].widget = forms.Select(attrs={'class': 'form-control'})
+        self.fields["bet_choice"].widget = forms.Select(attrs={"class": "form-control"})
 
         # Dynamically populate choices
         if "bet_match" in self.data:
             match_id = self.data["bet_match"]
             try:
                 match = Match.objects.get(id=match_id)
-                self.fields["bet_choice"].choices = [(match.get_teams()[0], match.get_teams()[0]), (match.get_teams()[1], match.get_teams()[1])]
+                self.fields["bet_choice"].choices = [
+                    (match.team1, f"{match.team1} (Odds: {match.odds_team1})"),
+                    (match.team2, f"{match.team2} (Odds: {match.odds_team2})"),
+                ]
             except Match.DoesNotExist:
                 self.fields["bet_choice"].choices = []
 
@@ -107,24 +114,20 @@ class CreateBetForm(forms.ModelForm):
         print("Data: ", self.data)
         cleaned_data = super().clean()
         print("Cleaned Data: ", cleaned_data)
-        selected_odd = cleaned_data.get('selected_odd')
+        selected_odd = cleaned_data.get("selected_odd")
         bet_choice = cleaned_data.get("bet_choice")
         bet_match = cleaned_data.get("bet_match")
 
         print(f"Selected Odd: {selected_odd}")
         print(f"Bet Choice: {bet_choice}")
-        print(f"Match Teams: {bet_match.get_teams()}")
-
-        if "bet_choice" in self.data:
-            cleaned_data["bet_choice"] = self.data["bet_choice"]
 
         if not selected_odd:
             raise forms.ValidationError("Selected odd must be provided.")
 
         # Validate bet_choice is one of the two teams
-        if bet_match and bet_choice not in bet_match.get_teams():
+        if bet_match and bet_choice not in [bet_match.team1, bet_match.team2]:
             raise forms.ValidationError("Invalid bet choice. Must be one of the teams in the match.")
-            
+
         return cleaned_data
 
 class UpdateBetForm(forms.ModelForm):
@@ -132,14 +135,12 @@ class UpdateBetForm(forms.ModelForm):
         model = Bet
         fields = ["amount_user_1", "amount_user_2", "selected_odd"]
 
-    # Optional: You can add validation or additional logic if needed
-
     def clean(self):
         cleaned_data = super().clean()
         amount_user_1 = cleaned_data.get("amount_user_1")
         amount_user_2 = cleaned_data.get("amount_user_2")
 
-        # Ensure both amounts are provided (if not using odds to auto-calculate)
+        # Ensure at least one bet amount is provided
         if not (amount_user_1 or amount_user_2):
             raise ValidationError("At least one bet amount must be provided.")
 

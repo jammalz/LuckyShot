@@ -21,7 +21,7 @@
             </div>
             <div class="match-content">
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <img src="{{ match.team1_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team1 }}">
                     <span class="team-name">{{ match.team1 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
                         {{ match.odds_team1 }}
@@ -29,7 +29,7 @@
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <img src="{{ match.team2_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team2 }}">
                     <span class="team-name">{{ match.team2 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
                         {{ match.odds_team2 }}
@@ -52,7 +52,7 @@
             </div>
             <div class="match-content">
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <img src="{{ match.team1_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team1 }}">
                     <span class="team-name">{{ match.team1 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
                         {{ match.odds_team1 }}
@@ -60,7 +60,7 @@
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <img src="{{ match.team2_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team2 }}">
                     <span class="team-name">{{ match.team2 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
                         {{ match.odds_team2 }}
@@ -83,7 +83,7 @@
             </div>
             <div class="match-content">
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team1|add:'.png' %}" alt="{{ match.team1 }}">
+                    <img src="{{ match.team1_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team1 }}">
                     <span class="team-name">{{ match.team1 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team1 }}&selected_odd={{ match.odds_team1 }}" class="odds">
                         {{ match.odds_team1 }}
@@ -91,7 +91,7 @@
                 </div>
                 <div class="match-vs">VS</div>
                 <div class="team">
-                    <img src="{% static 'images/team_logos/'|add:match.team2|add:'.png' %}" alt="{{ match.team2 }}">
+                    <img src="{{ match.team2_logo|default:'https://via.placeholder.com/50' }}" alt="{{ match.team2 }}">
                     <span class="team-name">{{ match.team2 }}</span>
                     <a href="{% url 'create_bet' %}?bet_match={{ match.id }}&bet_choice={{ match.team2 }}&selected_odd={{ match.odds_team2 }}" class="odds">
                         {{ match.odds_team2 }}
