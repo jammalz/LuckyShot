@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
-from .forms import SignupForm, CreateBetForm, UpdateBetForm
+from .forms import SignupForm, CreateBetForm
 from .models import Bet, Match
 from decimal import Decimal
 import logging
@@ -85,11 +85,11 @@ def create_bet(request):
 
 @login_required
 def accept_bet(request, bet_id):
-    """Allows user_2 to accept, edit, or decline a bet."""
+    """Allows user_2 to accept, decline, or propose changes by swapping values and redirecting to create a new bet."""
     bet = get_object_or_404(Bet, id=bet_id)
 
     if request.user != bet.user_2:
-        return redirect("dashboard")  # Only user_2 can accept or modify
+        return redirect("dashboard")  # Only user_2 can act on this bet
 
     if request.method == "POST":
         action = request.POST.get("action")
@@ -104,30 +104,33 @@ def accept_bet(request, bet_id):
             bet.save()
             return redirect("dashboard")
 
-        elif action == "edit":
-            form = UpdateBetForm(request.POST)
-            if form.is_valid():
-                # Invalidate the original bet
-                bet.status = "invalidated"
-                bet.save()
+        elif action == "propose_changes":
+            bet.status = "invalidated"
+            bet.save()
+            
+            # Swap user_1 and user_2
+            new_user_1 = bet.user_2
+            new_user_2 = bet.user_1
 
-                # Create a new bet with swapped users and updated values
-                new_bet = Bet.objects.create(
-                    user_1=bet.user_2,
-                    user_2=bet.user_1,
-                    bet_match=bet.bet_match,
-                    bet_type=bet.bet_type,
-                    amount_user_1=form.cleaned_data["amount_user_1"],
-                    amount_user_2=form.cleaned_data["amount_user_2"],
-                    selected_odd=form.cleaned_data["selected_odd"],
-                    status="pending",
-                )
-                return redirect("dashboard")
+            # Swap teams and odds from the **Match model**
+            match = bet.bet_match
+            new_bet_choice = match.team2 if bet.bet_choice == match.team1 else match.team1
+            new_selected_odd = match.odds_team2 if bet.bet_choice == match.team1 else match.odds_team1
 
-    else:
-        form = UpdateBetForm(instance=bet)
+            # Swap bet amounts
+            new_amount_user_1 = bet.amount_user_2
+            new_amount_user_2 = bet.amount_user_1
 
-    return render(request, "dashboard/accept_bet.html", {"bet": bet, "form": form})
+            # Redirect to create_bet page with **reversed** values
+            return redirect(
+                f"{request.build_absolute_uri('/create_bet/')}?"
+                f"bet_match={match.id}&bet_choice={new_bet_choice}"
+                f"&amount_user_1={new_amount_user_1}&amount_user_2={new_amount_user_2}"
+                f"&selected_odd={new_selected_odd}"
+                f"&user_2={new_user_2.id}"
+            )
+
+    return render(request, "dashboard/accept_bet.html", {"bet": bet})
 
 
 def matches(request):

@@ -1,20 +1,84 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Review Bet</h2>
-    <p><strong>Match:</strong> {{ bet.bet_match }}</p>
-    <p><strong>Your Opponent:</strong> {{ bet.user_1.username }}</p>
-    <p><strong>Original Amounts:</strong> You: ${{ bet.amount_user_2 }}, Opponent: ${{ bet.amount_user_1 }}</p>
-    
-    <form method="post">
-        {% csrf_token %}
-        <h3>Update Bet (Optional)</h3>
-        {{ form.as_p }}
-        
-        <button type="submit" name="action" value="accept">Accept Bet</button>
-        <button type="submit" name="action" value="edit">Propose Changes</button>
-        <button type="submit" name="action" value="decline">Decline Bet</button>
-    </form>
-    
-    <a href="{% url 'dashboard' %}">Cancel</a>
+    <div class="bet-review-container">
+        <h2>Review Bet</h2>
+
+        <div class="bet-details">
+            <p><strong>Match:</strong> {{ bet.bet_match }}</p>
+            <p><strong>Your Opponent:</strong> {{ bet.user_1.username }}</p>
+            <p><strong>Bet Choice:</strong> {{ bet.bet_choice }}</p>
+            <p><strong>Odds:</strong> {{ bet.selected_odd }}</p>
+            <p><strong>Amounts:</strong> You: ${{ bet.amount_user_2 }}, Opponent: ${{ bet.amount_user_1 }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="bet-actions">
+                <button type="submit" name="action" value="accept" class="accept-btn">Accept Bet</button>
+                <button type="submit" name="action" value="propose_changes" class="edit-btn">Propose Changes</button>
+                <button type="submit" name="action" value="decline" class="decline-btn">Decline Bet</button>
+            </div>
+        </form>
+
+        <a href="{% url 'dashboard' %}" class="cancel-link">Cancel</a>
+    </div>
+
+    <style>
+        .bet-review-container {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            color: white;
+        }
+        .bet-details p {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .bet-actions {
+            margin-top: 15px;
+        }
+        .bet-actions button {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+        }
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .accept-btn:hover {
+            background-color: #218838;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        .decline-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .decline-btn:hover {
+            background-color: #c82333;
+        }
+        .cancel-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #bbb;
+            text-decoration: none;
+        }
+        .cancel-link:hover {
+            color: white;
+        }
+    </style>
 {% endblock %}

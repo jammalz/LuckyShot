@@ -111,15 +111,10 @@ class CreateBetForm(forms.ModelForm):
                 self.fields["bet_choice"].choices = []
 
     def clean(self):
-        print("Data: ", self.data)
         cleaned_data = super().clean()
-        print("Cleaned Data: ", cleaned_data)
         selected_odd = cleaned_data.get("selected_odd")
         bet_choice = cleaned_data.get("bet_choice")
         bet_match = cleaned_data.get("bet_match")
-
-        print(f"Selected Odd: {selected_odd}")
-        print(f"Bet Choice: {bet_choice}")
 
         if not selected_odd:
             raise forms.ValidationError("Selected odd must be provided.")
@@ -127,21 +122,5 @@ class CreateBetForm(forms.ModelForm):
         # Validate bet_choice is one of the two teams
         if bet_match and bet_choice not in [bet_match.team1, bet_match.team2]:
             raise forms.ValidationError("Invalid bet choice. Must be one of the teams in the match.")
-
-        return cleaned_data
-
-class UpdateBetForm(forms.ModelForm):
-    class Meta:
-        model = Bet
-        fields = ["amount_user_1", "amount_user_2", "selected_odd"]
-
-    def clean(self):
-        cleaned_data = super().clean()
-        amount_user_1 = cleaned_data.get("amount_user_1")
-        amount_user_2 = cleaned_data.get("amount_user_2")
-
-        # Ensure at least one bet amount is provided
-        if not (amount_user_1 or amount_user_2):
-            raise ValidationError("At least one bet amount must be provided.")
 
         return cleaned_data

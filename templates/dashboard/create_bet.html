@@ -11,6 +11,9 @@
             <input type="hidden" id="bet_match_value" value="{{ request.GET.bet_match }}">
             <input type="hidden" id="bet_choice_value" value="{{ request.GET.bet_choice }}">
             <input type="hidden" id="selected_odd_value" value="{{ request.GET.selected_odd }}">
+            <input type="hidden" id="user_2_value" value="{{ request.GET.user_2 }}">
+            <input type="hidden" id="amount_user_1_value" value="{{ request.GET.amount_user_1 }}">
+            <input type="hidden" id="amount_user_2_value" value="{{ request.GET.amount_user_2 }}">
 
             {{ form.as_p }}
 
@@ -25,12 +28,16 @@
             const selectedOddField = document.getElementById('id_selected_odd');
             const amountUser1Field = document.getElementById('id_amount_user_1');
             const amountUser2Field = document.getElementById('id_amount_user_2');
+            const user2Field = document.getElementById('user_search');
 
             // Get values from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const betMatchValue = urlParams.get("bet_match");
             const betChoiceValue = urlParams.get("bet_choice");
             const selectedOddValue = urlParams.get("selected_odd");
+            const user2Value = urlParams.get("user_2");
+            const amountUser1Value = urlParams.get("amount_user_1");
+            const amountUser2Value = urlParams.get("amount_user_2");
 
             // Function to update bet choices dynamically
             function updateBetChoices() {
@@ -72,24 +79,26 @@
                 const selectedOdd = parseFloat(selectedOddField.value);
 
                 if (!isNaN(amountUser1) && !isNaN(selectedOdd) && amountUser1 > 0) {
-                    amountUser2Field.value = (amountUser1 * selectedOdd).toFixed(2);
+                    amountUser2Field.value = (amountUser1 * (selectedOdd - 1)).toFixed(2);
                 }
             }
+
+            // Populate fields based on URL parameters
+            if (betMatchValue) {
+                betMatchField.value = betMatchValue;
+                updateBetChoices();
+            }
+            if (betChoiceValue) betChoiceField.value = betChoiceValue;
+            if (selectedOddValue) selectedOddField.value = selectedOddValue;
+            if (user2Value) user2Field.value = user2Value;
+            if (amountUser1Value) amountUser1Field.value = amountUser1Value;
+            if (amountUser2Value) amountUser2Field.value = amountUser2Value;
 
             // Event Listeners for Dynamic Updates
             betMatchField.addEventListener('change', updateBetChoices);
             betChoiceField.addEventListener('change', updateSuggestedOdd);
             amountUser1Field.addEventListener('input', autoCalculateSecondAmount);
             selectedOddField.addEventListener('input', autoCalculateSecondAmount);
-
-            // Initialize on Page Load
-            if (betMatchValue) {
-                betMatchField.value = betMatchValue;
-                updateBetChoices();
-            }
-            if (selectedOddValue) {
-                selectedOddField.value = selectedOddValue;
-            }
         });
     </script>
 

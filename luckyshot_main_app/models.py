@@ -39,7 +39,7 @@ class Bet(models.Model):
 
         # Auto-validate bet_choice to be one of the teams in bet_match
         if self.bet_match and self.bet_choice:
-            teams = self.bet_match.get_teams()
+            teams = [self.bet_match.team1, self.bet_match.team2]
             if self.bet_choice not in teams:
                 raise ValueError(f"Invalid bet choice. Must be one of {teams}")
         
@@ -90,7 +90,8 @@ class Match(models.Model):
         return self.match_status == "live"
 
     def __str__(self):
-        return f"{self.team1} vs {self.team2} - {self.match_status}"
+        start_time = self.start_time.strftime("%Y-%m-%d %H:%M")
+        return f"{self.team1} vs {self.team2} - {start_time}"
 
     class Meta:
         ordering = ["start_time"]
