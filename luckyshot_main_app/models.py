@@ -95,3 +95,39 @@ class Match(models.Model):
 
     class Meta:
         ordering = ["start_time"]
+
+class Transaction(models.Model):
+    TRANSACTION_TYPES = [
+        ("deposit", "Deposit"),
+        ("withdrawal", "Withdrawal"),
+        ("bet_placed", "Bet Placed"),
+        ("bet_won", "Winnings Paid"),
+        ("bet_refunded", "Bet Refunded"),
+    ]
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="transactions")
+    bet = models.ForeignKey("Bet", null=True, blank=True, on_delete=models.SET_NULL, related_name="transactions")
+    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    stripe_payment_id = models.CharField(max_length=255, null=True, blank=True)  # Store Stripe payment ID
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.transaction_type} - ${self.amount}"
+    
+
+class UserBalance(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    available_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Usable funds
+    reserved_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Locked in pending bets
+
+    def total_balance(self):
+        """ Total balance is the sum of available + reserved funds. """
+        return self.available_balance + self.reserved_balance

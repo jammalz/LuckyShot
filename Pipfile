@@ -9,6 +9,7 @@ django-debug-toolbar = "*"
 gunicorn = "*"
 requests = "*"
 python-dotenv = "*"
+stripe = "*"
 
 [dev-packages]
 
