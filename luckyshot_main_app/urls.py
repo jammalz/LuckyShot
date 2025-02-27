@@ -12,4 +12,5 @@ urlpatterns = [
     path("stripe/deposit/", views.create_checkout_session, name="stripe_deposit"),
     path("stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
     path("bet/<int:bet_id>/settle/", views.settle_bet, name="settle_bet"),
+    path("bet/<int:bet_id>/cancel/", views.cancel_bet, name="cancel_bet"),
 ]

@@ -37,41 +37,66 @@
 
     <!-- Bets Awaiting Your Approval -->
     <h3>Bets Awaiting Your Approval</h3>
-    <div class="table-container">
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Match</th>
+                <th>Opponent</th>
+                <th>Your Choice</th>
+                <th>Bet Value</th>
+                <th>Jackpot</th>
+                <th>Created At</th>
+                <th>Actions</th> <!-- New column for button -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for bet in awaiting_your_approval %}
                 <tr>
-                    <th>Match</th>
-                    <th>Opponent</th>
-                    <th>Your Choice</th>
-                    <th>Bet Value</th>
-                    <th>Jackpot</th>
-                    <th>Created At</th>
+                    <td>{{ bet.bet_match }}</td>
+                    <td>{{ bet.opponent }}</td>
+                    <td>{{ bet.bet_choice }}</td>
+                    <td>${{ bet.your_amount }}</td>
+                    <td>${{ bet.jackpot }}</td>
+                    <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'accept_bet' bet.id %}" class="review-button">Review Bet</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for bet in awaiting_your_approval %}
-                    <tr>
-                        <td>{{ bet.bet_match }}</td>
-                        <td>{{ bet.opponent }}</td>
-                        <td>{{ bet.bet_choice }}</td>
-                        <td>${{ bet.your_amount }}</td>
-                        <td>${{ bet.jackpot }}</td>
-                        <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
-                    </tr>
-                    <div class="review-button">
-                        <button>
-                            <a href="{% url 'accept_bet' bet.id %}">Review Bet</a>
-                        </button>
-                    </div>
-                {% empty %}
-                    <tr>
-                        <td colspan="6">No bets awaiting your approval.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% empty %}
+                <tr>
+                    <td colspan="7">No bets awaiting your approval.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <style>
+        .review-button {
+            display: inline-block;
+            background-color: #28a745; /* Green */
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.3s ease-in-out;
+            text-align: center;
+            white-space: nowrap; /* Prevents text wrapping */
+        }
+        .review-button:hover {
+            background-color: #218838; /* Darker green */
+        }
+        td {
+            text-align: center;
+            vertical-align: middle; /* Centers button inside the cell */
+        }
+        th {
+            text-align: center;
+        }
+    </style>
+
+
+
 
     <!-- Bets Awaiting Opponent Approval -->
     <h3>Bets Awaiting Opponent Approval</h3>
@@ -84,6 +109,7 @@
                 <th>Bet Value</th>
                 <th>Jackpot</th>
                 <th>Created At</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -95,14 +121,36 @@
                     <td>${{ bet.your_amount }}</td>
                     <td>${{ bet.jackpot }}</td>
                     <td>{{ bet.created_at|date:"F j, Y, g:i a" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'cancel_bet' bet.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cancel-button">Cancel</button>
+                        </form>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="5">No bets awaiting opponent approval.</td>
+                    <td colspan="7">No bets awaiting opponent approval.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    
+    <style>
+        .cancel-button {
+            background-color: #dc3545; /* Red */
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .cancel-button:hover {
+            background-color: #c82333; /* Darker Red */
+        }
+    </style>
 
     <!-- Past Bets -->
     <h3>Past Bets</h3>

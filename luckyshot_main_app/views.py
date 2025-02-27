@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.db import transaction
+from django.contrib import messages
 
 from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -107,30 +109,94 @@ def create_bet(request):
 
 @login_required
 def accept_bet(request, bet_id):
-    """Allows user_2 to accept, decline, or propose changes by swapping values and redirecting to create a new bet."""
+    """Allows user_2 to accept, decline, or propose changes to a bet."""
     bet = get_object_or_404(Bet, id=bet_id)
 
     if request.user != bet.user_2:
         return redirect("dashboard")  # Only user_2 can act on this bet
 
+    user_balance = get_object_or_404(UserBalance, user=request.user)
+
     if request.method == "POST":
         action = request.POST.get("action")
 
         if action == "accept":
-            bet.status = "in_progress"
-            bet.save()
+            # Check if user_2 has enough balance
+            if user_balance.available_balance < bet.amount_user_2:
+                messages.error(request, "Insufficient balance to accept this bet.")
+                return redirect("dashboard")
+
+            with transaction.atomic():
+                # Update user_1's balance
+                user_1_balance = get_object_or_404(UserBalance, user=bet.user_1)
+                user_1_balance.reserved_balance -= bet.amount_user_1
+                user_1_balance.save()
+
+                # Deduct bet amount from user_2's balance
+                user_balance.available_balance -= bet.amount_user_2
+                user_balance.save()
+
+                # Create transaction for user_2
+                Transaction.objects.create(
+                    user=request.user,
+                    amount=bet.amount_user_2,
+                    transaction_type="bet_placed",
+                    status="pending",
+                    bet=bet
+                )
+
+                # Mark bet as in progress
+                bet.status = "in_progress"
+                bet.save()
+
+            messages.success(request, "Bet accepted! Funds are locked in.")
             return redirect("dashboard")
 
         elif action == "decline":
-            bet.status = "invalidated"
-            bet.save()
+            with transaction.atomic():
+                # Mark bet as invalidated
+                bet.status = "invalidated"
+                bet.save()
+
+                # Refund user_1 since bet was not accepted
+                user_1_balance = get_object_or_404(UserBalance, user=bet.user_1)
+                user_1_balance.available_balance += bet.amount_user_1
+                user_1_balance.reserved_balance -= bet.amount_user_1
+                user_1_balance.save()
+
+                # Log refund transaction
+                Transaction.objects.create(
+                    user=bet.user_1,
+                    amount=bet.amount_user_1,
+                    transaction_type="bet_refunded",
+                    status="completed",
+                    bet=bet
+                )
+
+            messages.info(request, "Bet was declined. Funds have been refunded to the original user.")
             return redirect("dashboard")
 
         elif action == "propose_changes":
-            bet.status = "invalidated"
-            bet.save()
-            
-            # Swap user_1 and user_2
+            with transaction.atomic():
+                # Mark the old bet as invalidated
+                bet.status = "invalidated"
+                bet.save()
+
+                # Refund user_1 since the bet was invalidated
+                user_1_balance = get_object_or_404(UserBalance, user=bet.user_1)
+                user_1_balance.available_balance += bet.amount_user_1
+                user_1_balance.reserved_balance -= bet.amount_user_1
+                user_1_balance.save()
+
+                Transaction.objects.create(
+                    user=bet.user_1,
+                    amount=bet.amount_user_1,
+                    transaction_type="bet_refunded",
+                    status="completed",
+                    bet=bet
+                )
+
+            # Swap users
             new_user_1 = bet.user_2
             new_user_2 = bet.user_1
 
@@ -174,7 +240,7 @@ def cancel_bet(request, bet_id):
         user=request.user,
         transaction_type="bet_canceled",
         amount=bet.amount_user_1,
-        related_bet=bet
+        bet=bet
     )
 
     return redirect("dashboard")

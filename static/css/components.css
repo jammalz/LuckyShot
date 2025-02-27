@@ -146,28 +146,6 @@ tbody tr {
     position: relative;
 }
 
-.review-button {
-    position: absolute;
-    right: -150px; /* Adjust as needed to position the button outside the table */
-    top: 50%;
-    /* transform: translateY(-50%); */
-}
-
-.review-button button {
-    background-color: var(--color-primary);
-    color: var(--color-text);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.review-button button:hover {
-    /* Give popping effect */
-    border: 1px solid var(--color-background);
-}
-
 /* Status Styling */
 
 .status {
